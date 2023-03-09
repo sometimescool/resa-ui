@@ -1,0 +1,14 @@
+Env de travail
+install de Vue 3 Snippets
+
+install de node
+
+ npm init vue@latest // Attention création d'un répertoire racine (nom du projet) , install vite + vue 3
+
+ à la racine  npm install
+
+démarrage  npm run dev
+
+http://localhost:5173/
+
+(voir https://vuejs.org/guide/quick-start.html#creating-a-vue-application)
