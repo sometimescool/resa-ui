@@ -34,6 +34,7 @@
 
 <script>
 export default {
+    name: 'Data-Grid',
     props: {
         data: Array,
         columns: Array,
@@ -90,7 +91,7 @@ export default {
             this.sortOrders[key] = this.sortOrders[key] * -1
         },
         select: function ( record ) {
-            debugger
+            this.$emit( "recordSelected", Object.assign( {}, record ) )
         }
     },
     created () {
@@ -125,7 +126,7 @@ table {
 }
 
 th {
-    background-color: #008f68;
+    background-color: var(--main-color);
     color: rgba(255, 255, 255, 0.66);
     cursor: pointer;
     user-select: none;
@@ -146,6 +147,15 @@ th.active {
 
 th.active .arrow {
     opacity: 1;
+}
+
+tr {
+    cursor: pointer
+}
+
+tr:hover {
+    background-color: rgba(0, 143, 104, 0.5);
+    color: white;
 }
 
 .arrow {
