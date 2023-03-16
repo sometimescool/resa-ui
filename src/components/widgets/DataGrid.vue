@@ -15,6 +15,7 @@
                         <th :key="item.name" @click="sortBy(item.name)" :class="{ active: sortKey == item.name }"
                             v-for="item in columns">
                             {{ item.label }}
+                            <span class="arrow" :class="sortOrders[item.name] > 0 ? 'asc' : 'dsc'"></span>
                         </th>
                     </thead>
                 </table>
@@ -22,7 +23,7 @@
             <div class="table-body-wrapper">
                 <table class="table-body">
                     <tbody>
-                        <tr :key="entry" v-for="entry in filteredData" @click="select(entry)">
+                        <tr :key="entry" v-for="entry in filteredData" @click="select(entry._id)">
                             <td :key="key" v-for="key in columns"> {{ entry[key.name] }}</td>
                         </tr>
                     </tbody>
@@ -38,13 +39,14 @@ export default {
     props: {
         data: Array,
         columns: Array,
-        meta: Object
+        meta: Object,
+        currentSelectionId: String
     },
     data () {
         return {
             searchQuery: '',
             sortKey: '',
-            sortOrders: {},
+            sortOrders: {}
         }
     },
     /**
@@ -88,10 +90,13 @@ export default {
     methods: {
         sortBy: function ( key ) {
             this.sortKey = key;
+            if ( this.sortOrders[key] === undefined ) {
+                this.sortOrders[key] = 1
+            }
             this.sortOrders[key] = this.sortOrders[key] * -1
         },
-        select: function ( record ) {
-            this.$emit( "recordSelected", Object.assign( {}, record ) )
+        select: function ( _id ) {
+            this.$emit( "select", _id )
         }
     },
     created () {
@@ -170,13 +175,13 @@ tr:hover {
 .arrow.asc {
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
-    border-bottom: 4px solid #FAE042;
+    border-bottom: 4px solid white;
 }
 
 .arrow.dsc {
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
-    border-top: 4px solid #FAE042;
+    border-top: 4px solid white;
 }
 
 #grid-template {

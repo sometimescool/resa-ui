@@ -16,24 +16,16 @@
         </div>
     </form>
 </template>
-<script>
-export default {
-    name: "Client-Crud",
-    props: {
-        record: Object
-    },
-    computed: {
-        data: function () {
-            return this.record;
-        }
-    },
-    methods: {
-        valueChange () {
-            debugger
-        }
-    }
-}
-</script>
+<script setup>
+import { toRef } from 'vue'
+const props = defineProps( {
+    record: Object
+} )
+
+const data = toRef( props, 'record' )
+
+</script >
+
 <style scoped>
 .containerField {
     margin: 8px 8px

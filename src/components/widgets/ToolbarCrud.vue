@@ -1,29 +1,36 @@
 <template>
     <div class="right-toolbar">
-        <button :disabled="!buttonsState.validate" class="button-icon button-validate" title="Enregistrer">
+        <button :disabled="!buttonsState.validate" class="button-icon button-validate" @click="clickButton('save')"
+            title="Enregistrer">
             <font-awesome-icon icon="fa-solid fa-check" />
         </button>
-        <button :disabled="!buttonsState.cancel" class="button-icon button-cancel" title="Annuler">
+        <button :disabled="!buttonsState.cancel" class="button-icon button-cancel" @click="clickButton('cancel')"
+            title="Annuler">
             <font-awesome-icon icon="fa-solid fa-xmark" />
         </button>
-        <button :disabled="!buttonsState.new" class="button-icon button-new" title="Nouveau">
+        <button :disabled="!buttonsState.new" class="button-icon button-new" @click="clickButton('new')" title="Nouveau">
             <font-awesome-icon icon="fa-solid fa-plus" />
         </button>
-        <button :disabled="!buttonsState.delete" class="button-icon button-delete " title="Supprimer">
+        <button :disabled="!buttonsState.delete" class="button-icon button-delete" @click="clickButton('delete')"
+            title="Supprimer">
             <font-awesome-icon icon="fa-solid fa-trash-can" />
         </button>
 
     </div>
 </template>
 
-<script>
-export default {
-    name: "Toolbar-Crud",
-    props: {
-        buttonsState: Object
-    },
+<script setup>
+
+defineProps( {
+    buttonsState: Object
+} )
+
+let emit = defineEmits( ['action'] )
+
+function clickButton ( actionId ) {
+    emit( "action", actionId )
 }
-</script>
+</script >
 
 <style scoped>
 .right-toolbar {
@@ -57,8 +64,6 @@ button[disabled] {
     margin-top: 16px;
     color: red
 }
-
-.button-cancel {}
 
 .button-validate {
     background-color: var(--main-color);

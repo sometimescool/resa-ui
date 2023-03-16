@@ -2,7 +2,8 @@
     <nav>
         <RouterLink to="/">Home</RouterLink><br>
         <RouterLink to="/about">About</RouterLink><br>
-        <RouterLink to="/client">Clients</RouterLink>
+        <RouterLink to="/clients">Clients</RouterLink><br>
+
     </nav>
 </template>
 
