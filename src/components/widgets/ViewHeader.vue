@@ -4,17 +4,18 @@
     </header>
 </template>
 
-<script>
-export default {
-    props: {
-        title: String
-    }
-}
+<script setup>
+defineProps( {
+    title: String
+} )
 </script>
 <style scoped>
 header {
-    margin: 4px 8px;
+    grid-area: header;
+    background-color: var(--main-color);
+    padding: 4px 8px;
     font-size: 20px;
     font-weight: bold;
+    color: white
 }
 </style>
