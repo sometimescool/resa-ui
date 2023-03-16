@@ -110,7 +110,6 @@ async function actionToolbar ( action ) {
         }
         case "delete": {
             showMessageConfirmDelete( "close", "confirmDelete" )
-            //await removeRecord()
             break
         }
     }
@@ -127,7 +126,7 @@ async function actionMessageDialog ( action ) {
             // On Enregistre les modif et on ferme
             const isOk = await save()
             if ( isOk ) {
-                await selecRecord()
+                await newRecord()
                 hideMessage()
             }
             break
@@ -139,7 +138,7 @@ async function actionMessageDialog ( action ) {
             break
         }
         case "cancelAndSelect": {
-            // On Abandonne les modif et on ferme
+            // On Abandonne les modif, on selectionne et on ferme 
             cancel()
             await selecRecord()
             hideMessage()
@@ -151,7 +150,6 @@ async function actionMessageDialog ( action ) {
                 await selecRecord()
                 hideMessage()
             }
-
             break
         }
         case "confirmDelete": {
