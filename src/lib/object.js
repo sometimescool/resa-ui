@@ -58,5 +58,23 @@ const isDataChanged = function ( data1, data2 ) {
 const objectClone = function ( obj ) {
     return Object.assign( {}, obj );
 }
-
-export { objectDiff, isEmtyObject, isDataChanged, objectClone }
+const clone = function ( obj ) {
+    return Object.assign( {}, obj );
+}
+const enumValidity = function ( validity ) {
+    const valitity = {
+        badInput: validity.badInput,
+        customError: validity.customError,
+        patternMismatch: validity.patternMismatch,
+        rangeOverflow: validity.rangeOverflow,
+        rangeUnderflow: validity.rangeUnderflow,
+        stepMismatch: validity.stepMismatch,
+        tooLong: validity.tooLong,
+        tooShort: validity.tooShort,
+        typeMismatch: validity.typeMismatch,
+        valid: validity.valid,
+        valueMissing: validity.valueMissing,
+    }
+    return valitity
+}
+export default { objectDiff, isEmtyObject, isDataChanged, objectClone, enumValidity, clone }

@@ -7,7 +7,8 @@
         </nav>
         <div class="resizer"></div>
         <main>
-            <component :is="editForm" :record="selectedRecord"></component>
+            <component :is="editForm" :record="model.data" @fieldValid="fieldValid" @change="fieldChange">
+            </component>
         </main>
         <toolBar :buttonsState="buttons.states" @action="actionToolbar"></toolBar>
         <messageDialog v-show="message.isVisible" @action="actionMessageDialog" :buttons="message.buttons">
@@ -28,28 +29,23 @@ import messageDialog from "./MessageDialog.vue";
 
 
 
-import { isEmtyObject, isDataChanged, objectClone } from "../../lib/object"
+import object from "../../lib/object"
 import { useGrid } from "../../use/useGrid.js"
-import { useHttpCrud } from "../../use/useHttpCrud.js"
+//import { useHttpCrud } from "../../use/useHttpCrud.js"
 import { useMessageDialog } from "../../use/useMessageDialog.js"
 
-import { ref, watch, toRef } from 'vue'
+import { ref, toRef } from 'vue'
 import { onBeforeUnmount } from 'vue'
 
 const props = defineProps( {
     api: String,
     title: String,
     columns: Array,
-    editForm: Object
+    editForm: Object,
+    Model: Function
 } )
 
-// use to defined changes in record and restore initial value form
-let initialRecord = {}
-
-const api = toRef( props, 'api' );
 const columns = toRef( props, 'columns' );
-
-const [getList, get, add, remove, update] = useHttpCrud( api.value )
 
 const buttons = ref( {
     states: {
@@ -61,25 +57,37 @@ const buttons = ref( {
 }, )
 const [message, hideMessage, showMessageDataChanged, showError, showMessageConfirmCancel, showMessageConfirmDelete] = useMessageDialog()
 
+const model = new props.Model( {} )
 
-const selectedRecord = ref( {} )
-
-const [grid, refreshList] = useGrid( getList, columns.value );
+const isValid = ref( false );
+const [grid, refreshList] = useGrid( model.getList, columns.value );
 
 
 /******************************************************************************
 * event emitted by components
 *******************************************************************************/
+// function fieldBlur ( event ) {
+//     console.log( `BaseCrud.fieldChange ${event.target.id} ${event.target.value}  isValide: ${event.target.checkValidity()}`, object.enumValidity( event.target.validity ) )
+// }
+function fieldChange ( event ) {
+    console.log( `BaseCrud.fieldChange ${event.target.id} ${event.target.value}  isValide: ${event.target.checkValidity()}`, object.enumValidity( event.target.validity ) )
+}
+
+function fieldValid ( form, fieldValid ) {
+    isValid.value = form.value.checkValidity();
+    ensureButtonState()
+    console.log( "BaseCrud.formValid", isValid.value )
+}
 /**
  *  Select record in left list (the grid)
  * @param {*} _id  mongodg uuid
  */
 async function select ( _id ) {
     grid.value.selectedId = _id
-    if ( dataHasChanged() ) {
+    if ( model.hasChanged() ) {
         showMessageDataChanged( "close", "cancelAndSelect", "registerAndSelect" )
     } else {
-        await selecRecord()
+        await selectRecord()
     }
 }
 /**
@@ -101,7 +109,7 @@ async function actionToolbar ( action ) {
             break
         }
         case "new": {
-            if ( dataHasChanged() ) {
+            if ( model.hasChanged() ) {
                 showMessageDataChanged( "close", "cancel", "registerAndNewRecord" )
             } else {
                 await newRecord()
@@ -140,14 +148,14 @@ async function actionMessageDialog ( action ) {
         case "cancelAndSelect": {
             // On Abandonne les modif, on selectionne et on ferme 
             cancel()
-            await selecRecord()
+            await selectRecord()
             hideMessage()
             break
         }
         case "registerAndSelect": {
             const isOk = await save()
             if ( isOk ) {
-                await selecRecord()
+                await selectRecord()
                 hideMessage()
             }
             break
@@ -159,28 +167,28 @@ async function actionMessageDialog ( action ) {
         }
     }
 }
-
 /******************************************************************************
 * CRUD
 *******************************************************************************/
 function newRecord () {
-    initialRecord = {};
-    selectedRecord.value = {}
+    model.initData( {} );
 }
 function cancel () {
-    selectedRecord.value = objectClone( initialRecord );
+    model.restoreData();
+    ensureButtonState()
 }
 async function save () {
     let jsonResponse;
-    if ( isEmtyObject( selectedRecord.value ) ) return
-    if ( selectedRecord.value._id ) {
-        jsonResponse = await update( selectedRecord.value._id, selectedRecord.value )
+    let data = model.getData();
+    if ( object.isEmtyObject( data ) ) return
+    if ( data._id ) {
+        jsonResponse = await model.update( data._id, data )
     } else {
-        jsonResponse = await add( selectedRecord.value )
+        jsonResponse = await model.add( data )
     }
     if ( !jsonResponse.error ) {
-        initialRecord = jsonResponse.data;
-        selectedRecord.value = objectClone( initialRecord );
+        model.initData( jsonResponse.data );
+        ensureButtonState()
     } else {
         showError( "close", jsonResponse.error.errors )
     }
@@ -190,44 +198,41 @@ async function save () {
 
 async function removeRecord () {
     let jsonResponse;
-    if ( isEmtyObject( selectedRecord.value ) ) return
-    if ( !selectedRecord.value._id ) return
-    jsonResponse = await remove( selectedRecord.value._id );
+    let data = model.getData();
+    if ( object.isEmtyObject( data ) ) return
+    if ( !data._id ) return
+    jsonResponse = await model.remove( data._id );
     if ( !jsonResponse.error ) {
-        initialRecord = {};
-        selectedRecord.value = {};
+        model.initData( {} );
+        ensureButtonState()
     };
     await refreshList()
 }
 
 /******************************************************************** */
 // track changes on record selected
-watch( selectedRecord,
-    () => {
-        ensureButtonState()
-    },
-    { deep: true } )
+// watch( model.data,
+//     ( newRecord, oldRecord ) => {
+//         ensureButtonState()
+//     },
+//     { deep: true } )
 
 /******************************************************************** */
 // Manage button states depending on selectedRecord changes
 function ensureButtonState () {
-    let dataChanged = dataHasChanged()
-    buttons.value.states.delete = ( !isEmtyObject( initialRecord ) && initialRecord._id !== null );
+    let dataChanged = model.hasChanged()
+    buttons.value.states.delete = model.initialized()
     buttons.value.states.new = true;
     buttons.value.states.cancel = dataChanged;
-    buttons.value.states.validate = dataChanged;
+    buttons.value.states.validate = dataChanged && isValid.value;
+    console.log( "ensureButtonState", buttons.value.states )
 }
-function dataHasChanged () {
-    return isDataChanged( initialRecord, selectedRecord.value )
+async function selectRecord () {
+    let entity = await model.get( grid.value.selectedId )
+    model.initData( entity.data );
+    ensureButtonState()
+    console.log( model )
 }
-
-async function selecRecord () {
-    let entity = await get( grid.value.selectedId )
-    selectedRecord.value = entity.data;
-    initialRecord = objectClone( entity.data );
-}
-
-
 
 onBeforeUnmount( () => {
     console.log( "before unmount" )
