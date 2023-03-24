@@ -1,16 +1,19 @@
-const useHttpCrud = function ( api ) {
+const useHttpCrud = function ( api, beforeSend = () => { }, receive = () => { } ) {
 
     async function getList () {
         const response = await fetch( api );
         const jsonResponse = await handelError( response )
+        receive( 'list', jsonResponse )
         return jsonResponse
     }
     async function get ( _id ) {
         const response = await fetch( `${api}${_id}` );
         const jsonResponse = await handelError( response )
+        receive( 'get', jsonResponse )
         return jsonResponse
     }
     async function add ( data ) {
+        beforeSend( 'add', data )
         const response = await fetch( `${api}`, {
             method: 'POST',
             headers: {
@@ -31,9 +34,11 @@ const useHttpCrud = function ( api ) {
             }
         } )
         const jsonResponse = await handelError( response )
+        receive( 'remove', jsonResponse )
         return jsonResponse
     }
     async function update ( _id, data ) {
+        beforeSend( 'update', data )
         const response = await fetch( `${api}${_id}`, {
             method: 'PUT',
             headers: {
@@ -43,6 +48,7 @@ const useHttpCrud = function ( api ) {
             body: JSON.stringify( data )
         } )
         const jsonResponse = await handelError( response )
+        receive( 'update', jsonResponse )
         return jsonResponse
     }
     async function handelError ( response ) {
