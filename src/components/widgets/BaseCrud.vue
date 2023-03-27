@@ -11,12 +11,13 @@
             </component>
         </main>
         <toolBar :buttonsState="buttons.states" @action="actionToolbar"></toolBar>
-        <messageDialog v-show="message.isVisible" @action="actionMessageDialog" :buttons="message.buttons">
+        <sf-message-dialog v-show="message.isVisible" @action="actionMessageDialog" :buttons="message.buttons">
             <template v-slot:header>{{ message.title }}</template>
             <template v-slot:body>
                 <ul v-html="message.message"></ul>
             </template>
-        </messageDialog>
+        </sf-message-dialog>
+        <sf-banner :show="showBanner" :text="textBanner" @toogle-banner="(value) => { showBanner = value }"></sf-banner>
     </main>
 </template >
   
@@ -25,13 +26,9 @@
 import dataGrid from "./DataGrid.vue";
 import ViewHeader from "./ViewHeader.vue";
 import toolBar from "./ToolbarCrud.vue";
-import messageDialog from "./MessageDialog.vue";
-
-
 
 import object from "../../lib/object"
 import { useGrid } from "../../use/useGrid.js"
-//import { useHttpCrud } from "../../use/useHttpCrud.js"
 import { useMessageDialog } from "../../use/useMessageDialog.js"
 
 import { ref, toRef } from 'vue'
@@ -46,7 +43,8 @@ const props = defineProps( {
 } )
 
 const columns = toRef( props, 'columns' );
-
+const showBanner = ref( false )
+const textBanner = ref( "" )
 const buttons = ref( {
     states: {
         validate: false,
@@ -62,7 +60,10 @@ const model = new props.Model( {} )
 const isValid = ref( false );
 const [grid, refreshList] = useGrid( model.getList, columns.value );
 
-
+function doShowBanner ( text ) {
+    showBanner.value = true
+    textBanner.value = text
+}
 /******************************************************************************
 * event emitted by components
 *******************************************************************************/
@@ -180,15 +181,19 @@ function cancel () {
 async function save () {
     let jsonResponse;
     let data = model.getData();
+    let textBanner = ""
     if ( object.isEmtyObject( data ) ) return
     if ( data._id ) {
-        jsonResponse = await model.update( data._id, data )
+        jsonResponse = await model.update( data._id, data );
+        textBanner = 'Modification terminée'
     } else {
         jsonResponse = await model.add( data )
+        textBanner = 'Création terminés'
     }
     if ( !jsonResponse.error ) {
         model.initData( jsonResponse.data );
-        ensureButtonState()
+        ensureButtonState();
+        doShowBanner( textBanner )
     } else {
         showError( "close", jsonResponse.error.errors )
     }
@@ -205,6 +210,7 @@ async function removeRecord () {
     if ( !jsonResponse.error ) {
         model.initData( {} );
         ensureButtonState()
+        doShowBanner( "Suppression terminée" )
     };
     await refreshList()
 }
