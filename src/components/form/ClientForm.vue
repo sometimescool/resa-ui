@@ -1,45 +1,43 @@
 <template>
-    <toto>
-        <form id="clientForm" ref="form">
+    <form id="clientForm" ref="form">
+        <section class="horizontal">
+            <field :type="text" id="lastName" v-model="record.lastName" label="Nom" required="true"
+                @fieldValid="fieldValid" />
+            <field :type="text" id="firstName" v-model="record.firstName" label="Prénom" required="true"
+                @fieldValid="fieldValid" />
+        </section>
+        <field :type="mail" id="email" v-model="record.email" label="Mail" required="true" @fieldValid="fieldValid" />
+        <section class="title">
+            <div>Télephone</div>
             <section class="horizontal">
-                <field :type="text" id="lastName" v-model="record.lastName" label="Nom" required="true"
+                <field :type="phone" id="mobile" v-model="record.mobile" label="Mobile" required="true"
                     @fieldValid="fieldValid" />
-                <field :type="text" id="firstName" v-model="record.firstName" label="Prénom" required="true"
+                <field :type="phone" id="phone" v-model="record.phone" label="Fixe" @fieldValid="fieldValid" />
+            </section>
+        </section>
+        <section class="title">
+            <div>Adresse</div>
+            <section class="horizontal">
+                <field :type="streetNum" id="streetNumber" v-model="record.streetNumber" size="5" label="No rue"
+                    required="true" @fieldValid="fieldValid" />
+                <field :type="text" id="street" v-model="record.street" label="Rue" required="true"
                     @fieldValid="fieldValid" />
             </section>
-            <field :type="mail" id="email" v-model="record.email" label="Mail" required="true" @fieldValid="fieldValid" />
-            <section class="title">
-                <div>Télephone</div>
-                <section class="horizontal">
-                    <field :type="phone" id="mobile" v-model="record.mobile" label="Mobile" required="true"
-                        @fieldValid="fieldValid" />
-                    <field :type="phone" id="phone" v-model="record.phone" label="Fixe" @fieldValid="fieldValid" />
-                </section>
+            <section class="horizontal">
+                <field :type="zipCode" id="zipCode" v-model="record.zipCode" size="5" label="Code postal" required="true"
+                    @fieldValid="fieldValid" />
+                <field :type="text" id="city" v-model="record.city" label="Ville" required="true"
+                    @fieldValid="fieldValid" />
             </section>
+            <field :type="text" id="country" v-model="record.country" label="Pays" @fieldValid="fieldValid" />
+
             <section class="title">
-                <div>Adresse</div>
-                <section class="horizontal">
-                    <field :type="streetNum" id="streetNumber" v-model="record.streetNumber" size="5" label="No rue"
-                        required="true" @fieldValid="fieldValid" />
-                    <field :type="text" id="street" v-model="record.street" label="Rue" required="true"
-                        @fieldValid="fieldValid" />
-                </section>
-                <section class="horizontal">
-                    <field :type="zipCode" id="zipCode" v-model="record.zipCode" size="5" label="Code postal"
-                        required="true" @fieldValid="fieldValid" />
-                    <field :type="text" id="city" v-model="record.city" label="Ville" required="true"
-                        @fieldValid="fieldValid" />
-                </section>
-                <field :type="text" id="country" v-model="record.country" label="Pays" @fieldValid="fieldValid" />
-
-                <section class="title">
-                    <div>Exemple de champ calculé</div>
-                    <div class="content" v-html="record.fullAdress"></div>
-                </section>
-
+                <div>Exemple de champ calculé</div>
+                <div class="content" v-html="record.fullAdress"></div>
             </section>
-        </form>
-    </toto>
+
+        </section>
+    </form>
 </template>
 
 <script setup>
