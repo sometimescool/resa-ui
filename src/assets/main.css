@@ -5,12 +5,12 @@ body {
   overflow: hidden;
 }
 
-#app {
+/* #app {
   display: grid;
   grid-template:
     "header header header header" 60px "nav resizer content content" calc(100vh - 60px) "nav resizer content content" calc(100vh - 60px) "nav resizer content content" calc(100vh - 60px) / 200px 6px auto auto;
   font-weight: normal;
-}
+} */
 
 a {
   text-decoration: none;

@@ -1,11 +1,11 @@
 <template>
-    <main id="crud-view">
+    <main id="crud-view" ref="crudView">
         <ViewHeader :title="title"></ViewHeader>
-        <nav>
+        <nav ref="leftList">
             <dataGrid :data="grid.data" :columns="columns" :meta="grid.meta" :selectedId='grid.selectedId' @select="select">
             </dataGrid>
         </nav>
-        <div class="resizer"></div>
+        <sf-vertical-sizer class="resizer" @endResize="endResize"></sf-vertical-sizer>
         <main>
             <component :is="editForm" :record="model.data" @fieldValid="fieldValid" @change="fieldChange">
             </component>
@@ -41,7 +41,8 @@ const props = defineProps( {
     editForm: Object,
     Model: Function
 } )
-
+const leftList = ref( 'leftList' )
+const crudView = ref( 'crudView' )
 const columns = toRef( props, 'columns' );
 const showBanner = ref( false )
 const textBanner = ref( "" )
@@ -70,6 +71,9 @@ function doShowBanner ( text ) {
 // function fieldBlur ( event ) {
 //     console.log( `BaseCrud.fieldChange ${event.target.id} ${event.target.value}  isValide: ${event.target.checkValidity()}`, object.enumValidity( event.target.validity ) )
 // }
+function endResize ( value ) {
+    crudView.value.style.gridTemplateColumns = ` ${value}px 6px auto auto`
+}
 function fieldChange ( event ) {
     console.log( `BaseCrud.fieldChange ${event.target.id} ${event.target.value}  isValide: ${event.target.checkValidity()}`, object.enumValidity( event.target.validity ) )
 }
@@ -188,7 +192,7 @@ async function save () {
         textBanner = 'Modification terminée'
     } else {
         jsonResponse = await model.add( data )
-        textBanner = 'Création terminés'
+        textBanner = 'Création terminée'
     }
     if ( !jsonResponse.error ) {
         model.initData( jsonResponse.data );
@@ -246,29 +250,18 @@ onBeforeUnmount( () => {
 </script>
   
 <style scoped>
-.resizer {
-    grid-area: resizer;
-    max-height: calc(100vh - 40px);
-    background-color: var(--resizer);
-}
-
-.resizer:hover {
-    cursor: e-resize
-}
-
 nav {
     padding-top: 10px;
     grid-area: nav;
     /**120 les deux header */
-    max-height: calc(100vh - 120px);
+    /* max-height: calc(100vh - 110px); */
     overflow: auto;
     font-size: 12px;
 }
 
 main>main {
-    padding-top: 10px;
     grid-area: content;
-    max-height: calc(100vh - 120px);
+    /* max-height: calc(100vh - 110px); */
     overflow: auto
 }
 
@@ -276,7 +269,7 @@ main>main {
     overflow: hidden;
     display: grid;
     grid-template:
-        "header header header header" 50px "nav resizer content content" calc(100vh - 80px) "nav resizer content content" calc(100vh - 80px) / 300px 6px auto auto;
+        "header header header header" 50px "nav resizer content content" calc(100vh - 110px) "nav resizer content content" calc(100vh - 110px) / 300px 6px auto auto;
     font-weight: normal;
 }
 </style>

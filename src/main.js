@@ -13,6 +13,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Banner from "./components/widgets/InfoBanner.vue"
 import MessageDialog from "./components/widgets/MessageDialog.vue";
+import VercicalSizer from "./components/widgets/VerticalSizer.vue";
 
 /* import specific icons */
 import { faPlus, faTrashCan, faCheck, faRotateLeft, faXmark } from '@fortawesome/free-solid-svg-icons'
@@ -29,6 +30,7 @@ const app = createApp( App )
 app.component( 'font-awesome-icon', FontAwesomeIcon )
 app.component( 'sf-banner', Banner )
 app.component( 'sf-message-dialog', MessageDialog )
+app.component( 'sf-vertical-sizer', VercicalSizer )
 app.use( store )
 app.use( router )
 
