@@ -14,7 +14,7 @@ import { RouterLink } from 'vue-router'
 <style scoped>
 nav {
     grid-area: nav;
-    max-height: calc(100vh - 40px);
+    max-height: calc(100vh - 60px);
     overflow: auto;
     background-color: var(--black-light);
     color: var(--vt-c-white);
@@ -22,6 +22,7 @@ nav {
     padding: 4px 8px;
     font-weight: bold;
 }
+
 
 nav a.router-link-exact-active {
     opacity: 1

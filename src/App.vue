@@ -1,20 +1,35 @@
 <template>
-  <mainHeader />
-  <mainNavigator />
-  <div class="resizer"></div>
-  <RouterView />
+  <main id="main-vue" ref="mainVue">
+    <mainHeader />
+    <mainNavigator />
+    <sf-vertical-sizer class="resizer" @endResize="endResize"></sf-vertical-sizer>
+    <RouterView />
+  </main>
 </template>
 
 <script setup>
-import { RouterView } from 'vue-router'
+import { RouterView } from "vue-router"
+import { ref } from "vue"
 import mainHeader from "./components/main/MainHeader.vue";
 import mainNavigator from "./components/main/MainNavigator.vue";
+
+const mainVue = ref( 'mainVue' )
+function endResize ( value ) {
+  mainVue.value.style.gridTemplateColumns = `${value}px 6px auto auto`
+}
 </script>
 
 <style scoped>
+#main-vue {
+  overflow: hidden;
+  display: grid;
+  grid-template:
+    "header header header header" 60px "nav resizer content content" calc(100vh - 60px) "nav resizer content content" calc(100vh - 60px) / 200px 6px auto auto;
+  font-weight: normal;
+}
+
 .resizer {
   grid-area: resizer;
-  max-height: calc(100vh - 40px);
   background-color: var(--resizer)
 }
 
@@ -22,9 +37,8 @@ import mainNavigator from "./components/main/MainNavigator.vue";
   cursor: e-resize
 }
 
-main {
+#main-vue {
   grid-area: content;
-  max-height: calc(100vh - 40px);
   overflow: auto
 }
 </style>

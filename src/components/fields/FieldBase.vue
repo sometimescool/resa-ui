@@ -4,7 +4,7 @@
             <div class="fieldLabel">{{ label }}</div>
             <component :is="type" :id="id" :ref="id" :modelValue="modelValue" :required="required" :size="size"
                 @blur="fieldBlur" @change="fieldChange" @beforeinput="cleanError" @input="inputChange"
-                @invalid="invalidField">
+                @invalid="invalidField" @properties="properties">
             </component>
         </div>
         <div class="fieldError">{{ state.error }}</div>
@@ -16,7 +16,7 @@ export default {
 }
 </script>
 <script setup>
-import { ref, toRef, reactive, watch } from 'vue'
+import { toRef, reactive, watch } from 'vue'
 import object from "../../lib/object"
 
 
@@ -30,6 +30,10 @@ const props = defineProps( {
         type: String,
         default: "20"
     },
+    properties: {
+        type: Object,
+        default: {}
+    }
 } )
 const state = reactive( { error: "" } ) //ref( "" );
 const modelValue = toRef( props, 'modelValue' )

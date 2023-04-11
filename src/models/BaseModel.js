@@ -16,10 +16,10 @@ export default class BaseModel {
     constructor( data = {} ) {
         this.data = ref( this.data );
         this.initData( data );
-        watch( this.data, ( newRecord, oldRecord ) => {
+        watch( this.data, ( record ) => {
             const me = this
             this.#computed.forEach( fieldname => {
-                me.data.value[fieldname] = me.fields[fieldname].computed( newRecord )
+                me.data.value[fieldname] = me.fields[fieldname].computed( record )
             } )
         }, { deep: true } )
     }
