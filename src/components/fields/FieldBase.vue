@@ -32,7 +32,7 @@ const props = defineProps( {
     },
     properties: {
         type: Object,
-        default: {}
+        default: () => { }
     }
 } )
 const state = reactive( { error: "" } ) //ref( "" );
@@ -56,7 +56,7 @@ function fieldBlur ( event ) {
     const valid = event.target.checkValidity()
     let errorTxt = ""
     if ( !valid ) {
-        errorTxt = fieldError( event.target.validity )
+        errorTxt = fieldError( event.target.validity, event.target.dataset.format )
         state.error = errorTxt
     } else {
         state.error = ""
@@ -73,9 +73,11 @@ function inputChange ( event ) {
     emit( 'update:modelValue', event.target.value );
 }
 
-function fieldError ( validity ) {
-    if ( validity.patternMismatch ) return "Format incorrect"
-    if ( validity.valueMissing ) return "Valeur obligatoire"
+function fieldError ( validity, format ) {
+    if ( validity.patternMismatch )
+        return `Format incorrect ${format !== undefined ? "(ex:" + format + ")" : ""
+            }`;
+    if ( validity.valueMissing ) return "Value obligatoire";
 }
 
 function invalidField ( event ) {
@@ -92,6 +94,20 @@ function invalidField ( event ) {
 .fieldContainer {
     margin-bottom: 8px;
     flex: 1;
+    padding-bottom: 10px;
+    position: relative;
+}
+
+input[required] {
+    background-color: rgba(176, 224, 230, 0.5);
+}
+
+input {
+    border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+input:focus {
+    outline: 1px solid rgba(0, 0, 0, 0.5);
 }
 
 .fieldLabel {
@@ -109,5 +125,10 @@ function invalidField ( event ) {
     line-height: 14px;
     height: 12px;
     color: red;
+    text-align: left;
+    position: absolute;
+    bottom: -1.5px;
+    left: 0px;
+    white-space: nowrap;
 }
 </style>
