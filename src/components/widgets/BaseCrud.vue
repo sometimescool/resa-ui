@@ -253,23 +253,25 @@ onBeforeUnmount( () => {
 nav {
     padding-top: 10px;
     grid-area: nav;
-    /**120 les deux header */
-    /* max-height: calc(100vh - 110px); */
     overflow: auto;
     font-size: 12px;
 }
 
-main>main {
+#main-vue>main {
     grid-area: content;
-    /* max-height: calc(100vh - 110px); */
-    overflow: auto
+    max-height: calc(100vh - 60px);
 }
 
 #crud-view {
     overflow: hidden;
     display: grid;
     grid-template:
-        "header header header header" 50px "nav resizer content content" calc(100vh - 110px) "nav resizer content content" calc(100vh - 110px) / 300px 6px auto auto;
+        "header header header header" 50px "nav resizer content content" "nav resizer content content" / 300px 6px auto auto;
     font-weight: normal;
+}
+
+#crud-view>main {
+    grid-area: content;
+    overflow: auto;
 }
 </style>
