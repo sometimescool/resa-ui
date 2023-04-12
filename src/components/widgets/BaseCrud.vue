@@ -17,7 +17,7 @@
                 <ul v-html="message.message"></ul>
             </template>
         </sf-message-dialog>
-        <sf-banner :show="showBanner" :text="textBanner" @toogle-banner="(value) => { showBanner = value }"></sf-banner>
+        <wsf-banner :bannerToAdd="bannerToAdd" />
     </main>
 </template >
   
@@ -44,8 +44,7 @@ const props = defineProps( {
 const leftList = ref( 'leftList' )
 const crudView = ref( 'crudView' )
 const columns = toRef( props, 'columns' );
-const showBanner = ref( false )
-const textBanner = ref( "" )
+const bannerToAdd = ref( {} );
 const buttons = ref( {
     states: {
         validate: false,
@@ -62,8 +61,10 @@ const isValid = ref( false );
 const [grid, refreshList] = useGrid( model.getList, columns.value );
 
 function doShowBanner ( text ) {
-    showBanner.value = true
-    textBanner.value = text
+    bannerToAdd.value = {
+        text: text,
+        autoHide: 3000
+    }
 }
 /******************************************************************************
 * event emitted by components
@@ -78,7 +79,7 @@ function fieldChange ( event ) {
     console.log( `BaseCrud.fieldChange ${event.target.id} ${event.target.value}  isValide: ${event.target.checkValidity()}`, object.enumValidity( event.target.validity ) )
 }
 
-function fieldValid ( form, fieldValid ) {
+function fieldValid ( form /*, fieldValid*/ ) {
     isValid.value = form.value.checkValidity();
     ensureButtonState()
     console.log( "BaseCrud.formValid", isValid.value )
