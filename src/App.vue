@@ -2,7 +2,7 @@
   <main id="main-vue" ref="mainVue">
     <mainHeader />
     <mainNavigator />
-    <sf-vertical-sizer class="resizer" @endResize="endResize"></sf-vertical-sizer>
+    <wsv-vetical-sizer class="resizer" @endResize="endResize" />
     <RouterView />
   </main>
 </template>

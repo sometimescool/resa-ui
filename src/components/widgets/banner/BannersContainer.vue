@@ -1,6 +1,6 @@
 <template>
     <div style="position: absolute; top: 0px; left: 0px; width: 100%">
-        <wsf-Banner v-for="banner in banners" :key="banner.id" :id="banner.id" :removed="banner.removed" :text="banner.text"
+        <wsf-banner v-for="banner in banners" :key="banner.id" :id="banner.id" :removed="banner.removed" :text="banner.text"
             :start="banner.start" :autoHide="banner.autoHide" :position="banner.position" :height="bannerHeight"
             :autoHidecount="banner.autoHidecount" @remove-banner="() => removeBanner(banner.id)" />
     </div>
@@ -9,7 +9,6 @@
 <script setup>
 import { toRef, ref, watch } from "vue";
 import wsfString from "../../../lib/string.js";
-import wsfBanner from "./ToastBanner.vue";
 
 const props = defineProps( { bannerToAdd: { type: Object, default: () => { } } } );
 const bannerToAdd = toRef( props, "bannerToAdd" );

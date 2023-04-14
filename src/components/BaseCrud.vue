@@ -5,31 +5,31 @@
             <dataGrid :data="grid.data" :columns="columns" :meta="grid.meta" :selectedId='grid.selectedId' @select="select">
             </dataGrid>
         </nav>
-        <sf-vertical-sizer class="resizer" @endResize="endResize"></sf-vertical-sizer>
+        <wsf-vertical-sizer class="resizer" @endResize="endResize" />>
         <main>
             <component :is="editForm" :record="model.data" @fieldValid="fieldValid" @change="fieldChange">
             </component>
         </main>
         <toolBar :buttonsState="buttons.states" @action="actionToolbar"></toolBar>
-        <sf-message-dialog v-show="message.isVisible" @action="actionMessageDialog" :buttons="message.buttons">
+        <wsf-message-dialog v-show="message.isVisible" @action="actionMessageDialog" :buttons="message.buttons">
             <template v-slot:header>{{ message.title }}</template>
             <template v-slot:body>
                 <ul v-html="message.message"></ul>
             </template>
-        </sf-message-dialog>
-        <wsf-banner :bannerToAdd="bannerToAdd" />
+        </wsf-message-dialog>
+        <wsf-banners-container :bannerToAdd="bannerToAdd" />
     </main>
 </template >
   
 <script setup>
 
-import dataGrid from "./DataGrid.vue";
-import ViewHeader from "./ViewHeader.vue";
-import toolBar from "./ToolbarCrud.vue";
+import dataGrid from "./widgets/DataGrid.vue";
+import ViewHeader from "./widgets/ViewHeader.vue";
+import toolBar from "./widgets/ToolbarCrud.vue";
 
-import object from "../../lib/object"
-import { useGrid } from "../../use/useGrid.js"
-import { useMessageDialog } from "../../use/useMessageDialog.js"
+import object from "../lib/object"
+import { useGrid } from "../use/useGrid.js"
+import { useMessageDialog } from "../use/useMessageDialog.js"
 
 import { ref, toRef } from 'vue'
 import { onBeforeUnmount } from 'vue'
