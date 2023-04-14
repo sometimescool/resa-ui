@@ -5,31 +5,31 @@
             <dataGrid :data="grid.data" :columns="columns" :meta="grid.meta" :selectedId='grid.selectedId' @select="select">
             </dataGrid>
         </nav>
-        <sf-vertical-sizer class="resizer" @endResize="endResize"></sf-vertical-sizer>
+        <wsf-vertical-sizer class="resizer" @endResize="endResize" />>
         <main>
             <component :is="editForm" :record="model.data" @fieldValid="fieldValid" @change="fieldChange">
             </component>
         </main>
         <toolBar :buttonsState="buttons.states" @action="actionToolbar"></toolBar>
-        <sf-message-dialog v-show="message.isVisible" @action="actionMessageDialog" :buttons="message.buttons">
+        <wsf-message-dialog v-show="message.isVisible" @action="actionMessageDialog" :buttons="message.buttons">
             <template v-slot:header>{{ message.title }}</template>
             <template v-slot:body>
                 <ul v-html="message.message"></ul>
             </template>
-        </sf-message-dialog>
-        <sf-banner :show="showBanner" :text="textBanner" @toogle-banner="(value) => { showBanner = value }"></sf-banner>
+        </wsf-message-dialog>
+        <wsf-banners-container :bannerToAdd="bannerToAdd" />
     </main>
 </template >
   
 <script setup>
 
-import dataGrid from "./DataGrid.vue";
-import ViewHeader from "./ViewHeader.vue";
-import toolBar from "./ToolbarCrud.vue";
+import dataGrid from "./widgets/DataGrid.vue";
+import ViewHeader from "./widgets/ViewHeader.vue";
+import toolBar from "./widgets/ToolbarCrud.vue";
 
-import object from "../../lib/object"
-import { useGrid } from "../../use/useGrid.js"
-import { useMessageDialog } from "../../use/useMessageDialog.js"
+import object from "../lib/object"
+import { useGrid } from "../use/useGrid.js"
+import { useMessageDialog } from "../use/useMessageDialog.js"
 
 import { ref, toRef } from 'vue'
 import { onBeforeUnmount } from 'vue'
@@ -44,8 +44,7 @@ const props = defineProps( {
 const leftList = ref( 'leftList' )
 const crudView = ref( 'crudView' )
 const columns = toRef( props, 'columns' );
-const showBanner = ref( false )
-const textBanner = ref( "" )
+const bannerToAdd = ref( {} );
 const buttons = ref( {
     states: {
         validate: false,
@@ -62,8 +61,10 @@ const isValid = ref( false );
 const [grid, refreshList] = useGrid( model.getList, columns.value );
 
 function doShowBanner ( text ) {
-    showBanner.value = true
-    textBanner.value = text
+    bannerToAdd.value = {
+        text: text,
+        autoHide: 3000
+    }
 }
 /******************************************************************************
 * event emitted by components
@@ -78,7 +79,7 @@ function fieldChange ( event ) {
     console.log( `BaseCrud.fieldChange ${event.target.id} ${event.target.value}  isValide: ${event.target.checkValidity()}`, object.enumValidity( event.target.validity ) )
 }
 
-function fieldValid ( form, fieldValid ) {
+function fieldValid ( form /*, fieldValid*/ ) {
     isValid.value = form.value.checkValidity();
     ensureButtonState()
     console.log( "BaseCrud.formValid", isValid.value )
@@ -253,23 +254,25 @@ onBeforeUnmount( () => {
 nav {
     padding-top: 10px;
     grid-area: nav;
-    /**120 les deux header */
-    /* max-height: calc(100vh - 110px); */
     overflow: auto;
     font-size: 12px;
 }
 
-main>main {
+#main-vue>main {
     grid-area: content;
-    /* max-height: calc(100vh - 110px); */
-    overflow: auto
+    max-height: calc(100vh - 60px);
 }
 
 #crud-view {
     overflow: hidden;
     display: grid;
     grid-template:
-        "header header header header" 50px "nav resizer content content" calc(100vh - 110px) "nav resizer content content" calc(100vh - 110px) / 300px 6px auto auto;
+        "header header header header" 50px "nav resizer content content" "nav resizer content content" / 300px 6px auto auto;
     font-weight: normal;
+}
+
+#crud-view>main {
+    grid-area: content;
+    overflow: auto;
 }
 </style>

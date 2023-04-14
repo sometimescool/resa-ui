@@ -4,7 +4,7 @@
   
 <script setup>
 
-import baseCrud from "../components/widgets/BaseCrud.vue";
+import baseCrud from "../components/BaseCrud.vue";
 import editForm from "../components/form/ClientForm.vue";
 import ClientModel from "../models/ClientModel.js"
 

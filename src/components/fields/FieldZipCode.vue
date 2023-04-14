@@ -1,5 +1,6 @@
 <template>
-    <input :id="id" :size="size" :name="id" type="text" :value="modelValue" :required="required" pattern="[0-9]{5,5}$" />
+    <input :id="id" :size="size" :name="id" type="text" :value="modelValue" :required="required" pattern="[0-9]{5,5}$"
+        data-format="12345" />
 </template>
 
 <script setup>

@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { toRef, ref, onMounted } from 'vue'
+import { toRef, ref } from 'vue'
 import field from '../fields/FieldBase.vue'
 import mail from '../fields/FieldMail.vue'
 import text from '../fields/FieldText.vue'
@@ -61,11 +61,6 @@ const record = toRef( props, 'record' );
 const emit = defineEmits( ['fieldValid'] )
 
 const [fieldValid] = useForm( form, record, emit )
-
-
-onMounted( () => {
-
-} )
 
 </script >
 

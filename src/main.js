@@ -11,7 +11,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 
 /* import font awesome icon component */
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import Banner from "./components/widgets/InfoBanner.vue"
+import BannersContainer from "./components/widgets/banner/BannersContainer.vue"
+import Banner from "./components/widgets/banner/ToastBanner.vue"
 import MessageDialog from "./components/widgets/MessageDialog.vue";
 import VercicalSizer from "./components/widgets/VerticalSizer.vue";
 import WsfLogo from "./assets/WsfLogo.vue";
@@ -32,9 +33,10 @@ library.add( faEllipsis );
 const app = createApp( App )
 
 app.component( 'font-awesome-icon', FontAwesomeIcon )
-app.component( 'sf-banner', Banner )
-app.component( 'sf-message-dialog', MessageDialog )
-app.component( 'sf-vertical-sizer', VercicalSizer )
+app.component( 'wsf-banners-container', BannersContainer )
+app.component( 'wsf-banner', Banner )
+app.component( 'wsf-message-dialog', MessageDialog )
+app.component( 'wsf-vertical-sizer', VercicalSizer )
 app.component( "wsf-logo", WsfLogo );
 app.use( store )
 app.use( router )
