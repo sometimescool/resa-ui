@@ -17,6 +17,7 @@
 
   --resizer: rgba(235, 235, 235, 0.64);
   --main-color: rgba(0, 143, 104, 1);
+  --main-color-light: rgba(0, 143, 104, 0.1);
 
   --vt-c-text-light-1: var(--vt-c-indigo);
   --vt-c-text-light-2: rgba(60, 60, 60, 0.66);

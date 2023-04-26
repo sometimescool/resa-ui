@@ -18,7 +18,7 @@ import VercicalSizer from "./components/widgets/VerticalSizer.vue";
 import WsfLogo from "./assets/WsfLogo.vue";
 
 /* import specific icons */
-import { faPlus, faTrashCan, faCheck, faRotateLeft, faXmark, faBars, faEllipsisVertical, faEllipsis } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faTrashCan, faCheck, faRotateLeft, faXmark, faBars, faEllipsisVertical, faEllipsis, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
 library.add( faPlus );
@@ -29,6 +29,8 @@ library.add( faXmark );
 library.add( faBars );
 library.add( faEllipsisVertical );
 library.add( faEllipsis );
+library.add( faSortUp );
+library.add( faSortDown );
 
 const app = createApp( App )
 

@@ -1,14 +1,14 @@
 <template>
-    <nav>
+    <nav ref="navigator">
         <RouterLink to="/">Home</RouterLink><br>
-        <RouterLink to="/about">About</RouterLink><br>
         <RouterLink to="/clients">Clients</RouterLink><br>
-
+        <RouterLink to="/flexiblegrid">Grille</RouterLink><br>
     </nav>
 </template>
 
 <script setup>
 import { RouterLink } from 'vue-router'
+
 </script>
 
 <style scoped>

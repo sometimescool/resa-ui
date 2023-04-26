@@ -1,6 +1,6 @@
 <template>
     <baseCrud :api="API" :title="title" :columns="columns" :editForm="editForm" :Model="clientModelClass"></baseCrud>
-</template >
+</template>
   
 <script setup>
 
