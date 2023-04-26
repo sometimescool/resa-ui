@@ -1,9 +1,14 @@
 <template>
-    <div class="resizer" @mousedown="mousedown"></div>
+    <div class="resizer" :data-index="index" @mousedown="mousedown"></div>
 </template>
 <script setup>
-import { ref } from 'vue'
-
+import { ref, toRef } from 'vue'
+const props = defineProps( {
+    layerStyle: String,
+    index: Number
+} )
+const layerStyle = toRef( props, "layerStyle" )
+const index = toRef( props, "index" )
 const layer = ref();
 const clientX = ref();
 const initialClientX = ref()
@@ -17,27 +22,38 @@ function mousedown ( event ) {
     window.addEventListener( 'mousemove', mousemove )
     window.addEventListener( 'mouseup', mouseup )
 
+    const rec = event.srcElement.getBoundingClientRect()
+
     // On garde la position d'origine par rapport à window
+
     clientX.value = event.clientX // Pour le calcul du déplacement à la volée
     initialClientX.value = event.clientX // Pour le calcul du déplacement final
 
     // On ajoute un layer de la bar de resize
-    const parent = event.srcElement.offsetParent
-    layer.value = getLayer( event.srcElement )
-    parent.appendChild( layer.value )
+    //const parent = event.srcElement.offsetParent
+    layer.value = getLayer( event.srcElement, rec )
+    window.document.body.appendChild( layer.value )
 }
-function getLayer ( srcElement ) {
+function getLayer ( srcElement, rec ) {
     // Creation du layer à partir des tailles et position de l'élement d'origine
     let layer
     layer = document.createElement( 'div' )
+    layer.dataset.index = srcElement.dataset.index
+    layer.style['z-index'] = 1000;
     layer.style['height'] = `${srcElement.offsetHeight}px`;
-    layer.style["top"] = `${srcElement.offsetTop}px`;
-    layer.style["left"] = `${srcElement.offsetLeft}px`;
+
+    layer.style["top"] = `${rec.top}px`;
+    layer.style["left"] = `${rec.left}px`;
+
     layer.style['width'] = `${srcElement.offsetWidth}px`;
     layer.style["position"] = "absolute";
-
     // Parce que je ne sais pas récupérer les valeur du l'élement d'origine
-    layer.style["background-color"] = "var(--resizer)";
+    if ( layerStyle.value ) {
+        layer.style["background"] = layerStyle.value;
+    } else {
+        layer.style["background"] = "var(--resizer)"
+    }
+
     layer.style['cursor'] = "e-resize";
 
     // On retourne le layer pour être inséré dans le DOM
@@ -53,7 +69,9 @@ function mouseup ( event ) {
     layer.value.remove()
 
     // on envoie au parent la position final (qui sera la taille du composant à gauche du resizer), à lui de se débrouiller avec ça !
-    emit( "endResize", parseInt( layer.value.style["left"], 10 ) )
+
+    const dep = event.clientX - initialClientX.value;
+    emit( "endResize", dep, event.srcElement )
 
 }
 function mousemove ( event ) {
@@ -70,9 +88,13 @@ function mousemove ( event ) {
 
 <style scoped>
 .resizer {
-    grid-area: resizer;
-    max-height: calc(100vh - 40px);
+    height: 100%;
     background-color: var(--resizer);
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: 100%;
+    width: 6px;
 }
 
 .resizer:hover {

@@ -2,10 +2,10 @@
     <main id="crud-view" ref="crudView">
         <ViewHeader :title="title"></ViewHeader>
         <nav ref="leftList">
-            <dataGrid :data="grid.data" :columns="columns" :meta="grid.meta" :selectedId='grid.selectedId' @select="select">
-            </dataGrid>
+            <dataGrid :data="grid.data" :columns="columns" :meta="grid.meta" :selectedId='grid.selectedId'
+                @select="select" />
         </nav>
-        <wsf-vertical-sizer class="resizer" @endResize="endResize" />>
+        <wsf-vertical-sizer class="resizer" @endResize="endResize" />
         <main>
             <component :is="editForm" :record="model.data" @fieldValid="fieldValid" @change="fieldChange">
             </component>
@@ -72,8 +72,9 @@ function doShowBanner ( text ) {
 // function fieldBlur ( event ) {
 //     console.log( `BaseCrud.fieldChange ${event.target.id} ${event.target.value}  isValide: ${event.target.checkValidity()}`, object.enumValidity( event.target.validity ) )
 // }
-function endResize ( value ) {
-    crudView.value.style.gridTemplateColumns = ` ${value}px 6px auto auto`
+function endResize ( dep ) {
+    const newSize = leftList.value.scrollWidth + dep;
+    crudView.value.style.gridTemplateColumns = ` ${newSize}px 6px auto auto`
 }
 function fieldChange ( event ) {
     console.log( `BaseCrud.fieldChange ${event.target.id} ${event.target.value}  isValide: ${event.target.checkValidity()}`, object.enumValidity( event.target.validity ) )
@@ -274,5 +275,10 @@ nav {
 #crud-view>main {
     grid-area: content;
     overflow: auto;
+}
+
+.resizer {
+    grid-area: resizer;
+    background-color: var(--resizer)
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
   <main id="main-vue" ref="mainVue">
     <mainHeader />
-    <mainNavigator />
-    <wsv-vetical-sizer class="resizer" @endResize="endResize" />
+    <mainNavigator ref="navigator" />
+    <wsf-vertical-sizer class="resizer" @endResize="endResize" />
     <RouterView />
   </main>
 </template>
@@ -14,9 +14,13 @@ import mainHeader from "./components/main/MainHeader.vue";
 import mainNavigator from "./components/main/MainNavigator.vue";
 
 const mainVue = ref( 'mainVue' )
-function endResize ( value ) {
-  mainVue.value.style.gridTemplateColumns = `${value}px 6px auto auto`
+const navigator = ref( 'navigator' )
+
+function endResize ( dep ) {
+  const newSize = navigator.value.$refs.navigator.scrollWidth + dep;
+  mainVue.value.style.gridTemplateColumns = `${newSize}px 6px auto auto`
 }
+
 </script>
 
 <style scoped>
