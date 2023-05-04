@@ -23,6 +23,7 @@
 import { ref } from "vue"
 import dropdownMenu from '../widgets/dropdown/DropdownMenu.vue'
 
+const emit = defineEmits( ["disconnect"] )
 // defined items 
 const itemList1 = ref( [
     {
@@ -50,7 +51,7 @@ const itemList2 = ref( [
 ] )
 const itemList3 = ref( [
     {
-        text: 'Item 1',
+        text: 'Déconnexion',
         action: doClickItem6,
     },
     {
@@ -86,7 +87,7 @@ function doClickItem5 () {
     console.log( 'doClickItem5' )
 }
 function doClickItem6 () {
-    console.log( 'doClickItem6' )
+    emit( 'disconnect' )
 }
 function doClickItem7 () {
     console.log( 'doClickItem7' )

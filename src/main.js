@@ -18,7 +18,7 @@ import VercicalSizer from "./components/widgets/VerticalSizer.vue";
 import WsfLogo from "./assets/WsfLogo.vue";
 
 /* import specific icons */
-import { faPlus, faTrashCan, faCheck, faRotateLeft, faXmark, faBars, faEllipsisVertical, faEllipsis, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faTrashCan, faCheck, faRotateLeft, faXmark, faBars, faEllipsisVertical, faEllipsis, faSortUp, faSortDown, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
 library.add( faPlus );
@@ -31,6 +31,8 @@ library.add( faEllipsisVertical );
 library.add( faEllipsis );
 library.add( faSortUp );
 library.add( faSortDown );
+library.add( faChevronUp );
+library.add( faChevronDown );
 
 const app = createApp( App )
 
@@ -40,6 +42,7 @@ app.component( 'wsf-banner', Banner )
 app.component( 'wsf-message-dialog', MessageDialog )
 app.component( 'wsf-vertical-sizer', VercicalSizer )
 app.component( "wsf-logo", WsfLogo );
+
 app.use( store )
 app.use( router )
 

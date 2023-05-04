@@ -1,10 +1,14 @@
 <template>
-  <main id="main-vue" ref="mainVue">
-    <mainHeader />
+  <main id="main-vue" ref="mainVue" v-if="userConnected">
+    <mainHeader @disconnect="() => userDisconnect()" />
     <mainNavigator ref="navigator" />
     <wsf-vertical-sizer class="resizer" @endResize="endResize" />
     <RouterView />
   </main>
+  <div v-else>Fomulaire de connexion
+
+    <button @click="() => connect()">connexion</button>
+  </div>
 </template>
 
 <script setup>
@@ -15,12 +19,18 @@ import mainNavigator from "./components/main/MainNavigator.vue";
 
 const mainVue = ref( 'mainVue' )
 const navigator = ref( 'navigator' )
-
+const userConnected = ref( false )
 function endResize ( dep ) {
   const newSize = navigator.value.$refs.navigator.scrollWidth + dep;
   mainVue.value.style.gridTemplateColumns = `${newSize}px 6px auto auto`
 }
 
+function connect () {
+  userConnected.value = true
+}
+function userDisconnect () {
+  userConnected.value = false
+}
 </script>
 
 <style scoped>
