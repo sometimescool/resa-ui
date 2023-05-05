@@ -1,13 +1,12 @@
 <template>
     <nav ref="navigator">
-        <RouterLink to="/">Home</RouterLink><br>
-        <RouterLink to="/clients">Clients</RouterLink><br>
-        <RouterLink to="/flexiblegrid">Grille</RouterLink><br>
+        <menu-tree v-for="item in getTree()" :key="item.name" :userItem="item"></menu-tree>
     </nav>
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router'
+import { getTree } from './UserNavigation.js'
+import menuTree from './MenuTree.vue'
 
 </script>
 
@@ -21,6 +20,10 @@ nav {
     font-size: 16px;
     padding: 4px 8px;
     font-weight: bold;
+}
+
+a {
+    display: block
 }
 
 

@@ -11,7 +11,9 @@
             </component>
         </main>
         <toolBar :buttonsState="buttons.states" @action="actionToolbar"></toolBar>
-        <wsf-message-dialog v-show="message.isVisible" @action="actionMessageDialog" :buttons="message.buttons">
+
+        <wsf-message-dialog v-show="message.isVisible" @action="(action) => setDialogResponse(action)"
+            :buttons="message.buttons">
             <template v-slot:header>{{ message.title }}</template>
             <template v-slot:body>
                 <ul v-html="message.message"></ul>
@@ -33,6 +35,7 @@ import { useMessageDialog } from "../use/useMessageDialog.js"
 
 import { ref, toRef } from 'vue'
 import { onBeforeUnmount } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 
 const props = defineProps( {
     api: String,
@@ -53,7 +56,7 @@ const buttons = ref( {
         delete: false
     }
 }, )
-const [message, hideMessage, showMessageDataChanged, showError, showMessageConfirmCancel, showMessageConfirmDelete] = useMessageDialog()
+const [message, showDialog, setDialogResponse] = useMessageDialog()
 
 const model = new props.Model( {} )
 
@@ -92,10 +95,55 @@ function fieldValid ( form /*, fieldValid*/ ) {
 async function select ( _id ) {
     grid.value.selectedId = _id
     if ( model.hasChanged() ) {
-        showMessageDataChanged( "close", "cancelAndSelect", "registerAndSelect" )
-    } else {
-        await selectRecord()
+        const response = await showDialogDataChange()
+        switch ( response ) {
+            case 0: return; // do nothing 
+            case 1: break; // continue : loose updates and select
+            case 2: {
+                const isSaveOk = await save()
+                if ( !isSaveOk ) return   // stay on the page
+                // save and continue selection
+            }
+        }
     }
+    await selectRecord()
+}
+async function showDialogDataChange () {
+    const response = await showDialog( 'Des modifications sont en cours.',
+        { mess: { message: "Que voulez-vous faire des modifications ?" } },
+        [
+            { label: 'Ne rien faire', action: 0 },
+            { label: 'Les abandonner et continuer', action: 1 },
+            { label: 'Les enregister et continuer', action: 2, default: true }
+        ] )
+    return response
+}
+async function showMessageConfirmCancel () {
+    const response = await showDialog( 'Vous voulez abandonner vos modifications.',
+        { mess: { message: "Confirmer l'abandon des modifications" } },
+        [
+            { label: 'Non', action: 0 },
+            { label: 'Oui', action: 1 },
+        ] )
+    return response
+}
+
+async function showMessageConfirmDelete () {
+    const response = await showDialog( "Suppression de l'élément courant.",
+        { mess: { message: "Confirmer la suppression ?" } },
+        [
+            { label: 'Non', action: 0 },
+            { label: 'Oui', action: 1 },
+        ] )
+    return response
+}
+async function showDialogError ( messages ) {
+    const response = await showDialog( "Erreur",
+        messages,
+        [{ label: 'Fermer', action: 1, default: true }]
+    )
+    return response
+
 }
 /**
  * Action on toolbar 
@@ -112,75 +160,47 @@ async function actionToolbar ( action ) {
             break
         }
         case "cancel": {
-            showMessageConfirmCancel( "close", "cancel" )
+            let response = await showMessageConfirmCancel()
+            switch ( response ) {
+                case 0: break // no : keep updates
+                case 1: cancelUpdate() // yes : loose updates
+            }
             break
         }
         case "new": {
             if ( model.hasChanged() ) {
-                showMessageDataChanged( "close", "cancel", "registerAndNewRecord" )
-            } else {
-                await newRecord()
+                const response = await showDialogDataChange()
+                switch ( response ) {
+                    case 0: return; // do nothing 
+                    case 1: break; // continue : loose updates and new record
+                    case 2: {
+                        const isSaveOk = await save()
+                        if ( !isSaveOk ) return   // stay on the page
+                        // save and continue new record
+                    }
+                }
             }
+            await newRecord()
             break
         }
         case "delete": {
-            showMessageConfirmDelete( "close", "confirmDelete" )
+            const response = await showMessageConfirmDelete()
+            switch ( response ) {
+                case 0: break // no : keep updates
+                case 1: await removeRecord() // yes : delete record
+            }
             break
         }
     }
 }
 
-async function actionMessageDialog ( action ) {
-    switch ( action ) {
-        case "close": {
-            // On ferme sans rien faire
-            hideMessage()
-            break
-        }
-        case "registerAndNewRecord": {
-            // On Enregistre les modif et on ferme
-            const isOk = await save()
-            if ( isOk ) {
-                await newRecord()
-                hideMessage()
-            }
-            break
-        }
-        case "cancel": {
-            // On Abandonne les modif et on ferme
-            cancel()
-            hideMessage()
-            break
-        }
-        case "cancelAndSelect": {
-            // On Abandonne les modif, on selectionne et on ferme 
-            cancel()
-            await selectRecord()
-            hideMessage()
-            break
-        }
-        case "registerAndSelect": {
-            const isOk = await save()
-            if ( isOk ) {
-                await selectRecord()
-                hideMessage()
-            }
-            break
-        }
-        case "confirmDelete": {
-            await removeRecord()
-            hideMessage()
-            break
-        }
-    }
-}
 /******************************************************************************
 * CRUD
 *******************************************************************************/
 function newRecord () {
     model.initData( {} );
 }
-function cancel () {
+function cancelUpdate () {
     model.restoreData();
     ensureButtonState()
 }
@@ -201,7 +221,7 @@ async function save () {
         ensureButtonState();
         doShowBanner( textBanner )
     } else {
-        showError( "close", jsonResponse.error.errors )
+        await showDialogError( jsonResponse.error.errors )
     }
     await refreshList()
     return ( jsonResponse.error ? false : true )
@@ -248,6 +268,16 @@ async function selectRecord () {
 
 onBeforeUnmount( () => {
     console.log( "before unmount" )
+} )
+onBeforeRouteLeave( async ( /*to, from*/ ) => {
+    if ( model.hasChanged() ) {
+        const response = await showDialogDataChange()
+        switch ( response ) {
+            case 0: return false;
+            case 1: return true;
+            case 2: return await save()
+        }
+    }
 } )
 </script>
   
