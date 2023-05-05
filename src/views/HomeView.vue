@@ -7,3 +7,13 @@ import TheWelcome from '../components/TheWelcome.vue'
     <TheWelcome />
   </main>
 </template>
+
+<style scoped>
+main {
+  grid-area: content;
+}
+
+h1 {
+  text-align: center
+}
+</style>
