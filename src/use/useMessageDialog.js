@@ -1,8 +1,7 @@
 import { ref } from 'vue';
 
-let resolveClosed;
-
 const useMessageDialog = function () {
+    let resolveClosed;
     const message = ref( {
         isVisible: false,
         title: "",

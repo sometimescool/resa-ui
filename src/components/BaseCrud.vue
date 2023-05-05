@@ -194,50 +194,6 @@ async function actionToolbar ( action ) {
     }
 }
 
-// async function actionMessageDialog ( action ) {
-//     switch ( action ) {
-//         case "close": {
-//             // On ferme sans rien faire
-//             hideMessage()
-//             break
-//         }
-//         case "registerAndNewRecord": {
-//             // On Enregistre les modif et on ferme
-//             const isOk = await save()
-//             if ( isOk ) {
-//                 await newRecord()
-//                 hideMessage()
-//             }
-//             break
-//         }
-//         case "cancel": {
-//             // On Abandonne les modif et on ferme
-//             cancel()
-//             hideMessage()
-//             break
-//         }
-//         case "cancelAndSelect": {
-//             // On Abandonne les modif, on selectionne et on ferme 
-//             cancel()
-//             await selectRecord()
-//             hideMessage()
-//             break
-//         }
-//         case "registerAndSelect": {
-//             const isOk = await save()
-//             if ( isOk ) {
-//                 await selectRecord()
-//                 hideMessage()
-//             }
-//             break
-//         }
-//         case "confirmDelete": {
-//             await removeRecord()
-//             hideMessage()
-//             break
-//         }
-//     }
-// }
 /******************************************************************************
 * CRUD
 *******************************************************************************/
